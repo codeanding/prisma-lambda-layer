@@ -1,27 +1,27 @@
 #!/bin/sh
 
-set -e  # Detener el script si hay un error
+set -e  # Stop script if there's an error
 
-echo "🧹 Limpiando directorios anteriores..."
+echo "🧹 Cleaning previous directories..."
 rm -rf dist
 rm -rf layers/prisma-layer/nodejs/node_modules
 
-echo "📦 Instalando dependencias del proyecto..."
+echo "📦 Installing project dependencies..."
 yarn install
 
-echo "🔄 Ejecutando prisma generate para el proyecto principal..."
+echo "🔄 Running prisma generate for main project..."
 npx prisma generate
 
-echo "🔄 Preparando los Layers..."
-sh $(dirname "$0")/prisma-layers.sh 
+echo "🔄 Preparing Layers..."
+sh $(dirname "$0")/prisma-layers.sh
 
-echo "🔨 Compilando el código TypeScript..."
+echo "🔨 Compiling TypeScript code..."
 yarn build
 
-echo "📦 Construyendo con AWS SAM..."
+echo "📦 Building with AWS SAM..."
 sam build --use-container
 
-echo "🚀 Desplegando en AWS..."
+echo "🚀 Deploying to AWS..."
 sam deploy --profile codeanding \
   --template-file template.yml \
   --s3-bucket codeanding \
@@ -29,4 +29,4 @@ sam deploy --profile codeanding \
   --capabilities CAPABILITY_IAM \
   --no-confirm-changeset
 
-echo "✅ Despliegue completado exitosamente."
+echo "✅ Deployment successfully completed."

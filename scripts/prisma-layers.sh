@@ -1,16 +1,15 @@
 #!/bin/sh
 
-set -e  # Detener el script si hay un error
-
+set -e
 LAYERS_DIR="layers"
 PRISMA_LAYER="$LAYERS_DIR/prisma-layer"
 NODEJS_PATH="$PRISMA_LAYER/nodejs"
 
-echo "🧹 Limpiando directorio del layer anterior..."
+echo "🧹 Cleaning previous layer directory..."
 rm -rf "$PRISMA_LAYER"
 mkdir -p "$NODEJS_PATH/prisma"
 
-echo "📋 Creando package.json específico para el layer..."
+echo "📋 Creating specific package.json for layer..."
 cat > "$NODEJS_PATH/package.json" << EOF
 {
   "name": "prisma-layer",
@@ -24,29 +23,28 @@ cat > "$NODEJS_PATH/package.json" << EOF
 }
 EOF
 
-echo "📝 Copiando schema.prisma al layer..."
+echo "📝 Copying schema.prisma to layer..."
 cp prisma/schema.prisma "$NODEJS_PATH/prisma/"
 
-echo "📦 Instalando dependencias en el layer..."
+echo "📦 Installing dependencies in layer..."
 cd "$NODEJS_PATH"
 
-# Instalar todas las dependencias primero (incluyendo devDependencies)
+# install dependencies
 yarn install
-
-echo "⚙️ Generando cliente Prisma en el layer..."
+echo "⚙️ Generating Prisma client in layer..."
 NODE_ENV=development yarn prisma generate
 
-echo "🧹 Limpiando devDependencies..."
+echo "🧹 Cleaning devDependencies..."
 yarn install --production
 
-echo "📁 Verificando estructura de directorios..."
+echo "📁 Verifying directory structure..."
 mkdir -p node_modules/.prisma/client
 
-echo "🗜️ Creando archivo ZIP del layer..."
+echo "🗜️ Creating layer ZIP file..."
 cd ..
 zip -r "../prisma-layer.zip" nodejs/
 
-echo "↩️ Volviendo al directorio principal..."
+echo "↩️ Returning to main directory..."
 cd ../../
 
-echo "✅ Layer de Prisma preparado exitosamente"
+echo "✅ Prisma layer successfully prepared"
