@@ -1,0 +1,260 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  sample-api
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+  Function:
+    CodeUri: ./dist
+    Runtime: nodejs18.x
+    MemorySize: 128
+    Timeout: 10
+    AutoPublishAlias: Live
+
+    Environment:
+      Variables:
+        DATABASE_URL: !Sub '{{resolve:secretsmanager:staging/lambda-prisma:SecretString:DATABASE_URL}}'
+        PRISMA_BINARY_TARGET: 'rhel-openssl-1.0.x'
+
+Resources:
+  PrismaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: prisma-layer
+      ContentUri: layers/prisma-layer
+      CompatibleRuntimes:
+        - nodejs18.x
+      RetentionPolicy: Retain
+
+  GetAllCountriesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/countries.CountriesHandler.getAllCountries
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/countries
+            Method: GET
+
+  GetCountryByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/countries.CountriesHandler.getCountryById
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/countries/{id}
+            Method: GET
+
+  CreateCountryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/countries.CountriesHandler.createCountry
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/countries
+            Method: POST
+
+  UpdateCountryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/countries.CountriesHandler.updateCountry
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/countries/{id}
+            Method: PUT
+
+  DeleteCountryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/countries.CountriesHandler.deleteCountry
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/countries/{id}
+            Method: DELETE
+
+  GetAllDishesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/dishes.DishesHandler.getAllDishes
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/food
+            Method: GET
+
+  GetDishByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/dishes.DishesHandler.getDishById
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/food/{id}
+            Method: GET
+
+  CreateDishFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/dishes.DishesHandler.createDish
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/food
+            Method: POST
+
+  UpdateDishFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/dishes.DishesHandler.updateDish
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/food/{id}
+            Method: PUT
+
+  DeleteDishFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/dishes.DishesHandler.deleteDish
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/food/{id}
+            Method: DELETE
+
+  GetAllIngredientsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/ingredients.IngredientsHandler.getAllIngredients
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/ingredients
+            Method: GET
+
+  GetIngredientByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/ingredients.IngredientsHandler.getIngredientById
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/ingredients/{id}
+            Method: GET
+
+  CreateIngredientFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/ingredients.IngredientsHandler.createIngredient
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/ingredients
+            Method: POST
+
+  UpdateIngredientFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/ingredients.IngredientsHandler.updateIngredient
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/ingredients/{id}
+            Method: PUT
+
+  DeleteIngredientFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/ingredients.IngredientsHandler.deleteIngredient
+      MemorySize: 128
+      Timeout: 10
+      Layers:
+        - !Ref PrismaLayer
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v1/ingredients/{id}
+            Method: DELETE
