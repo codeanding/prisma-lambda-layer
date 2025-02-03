@@ -1,0 +1,16 @@
+# AWS SAM build directory
+.aws-sam
+
+# macOS system files
+*.DS_Store
+
+# Build output
+dist
+
+# Node.js dependencies
+node_modules
+
+# Ignore all ZIP files at any level
+**/*.zip
+
+*.env
