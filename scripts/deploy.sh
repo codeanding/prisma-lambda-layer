@@ -13,7 +13,7 @@ echo "🔄 Ejecutando prisma generate para el proyecto principal..."
 npx prisma generate
 
 echo "🔄 Preparando los Layers..."
-sh $(dirname "$0")/prepare-layers.sh 
+sh $(dirname "$0")/prisma-layers.sh 
 
 echo "🔨 Compilando el código TypeScript..."
 yarn build
